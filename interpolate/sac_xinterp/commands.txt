@@ -1,1 +1,65 @@
+python -m sac_xinterp.cli prepare \
+  --data_dir . \
+  --pattern "WB*.r" \
+  --xmap xmap.txt \
+  --out metadata.csv
+
+
+python -m sac_xinterp.cli train \
+  --data_dir . \
+  --pattern "WB*.r" \
+  --xmap xmap.txt \
+  --comp r \
+  --train_mode full \
+  --epochs 30 --batch_size 16 --lr 1e-3 \
+  --device cpu \
+  --dt 0.1 \
+  --model_out model_R.ckpt
+
+python -m sac_xinterp.cli train \
+  --data_dir . \
+  --pattern "WB*.z" \
+  --xmap xmap.txt \
+  --comp z \
+  --train_mode full \
+  --epochs 30 --batch_size 16 --lr 1e-3 \
+  --device cpu \
+  --dt 0.1 \
+  --model_out model_Z.ckpt
+
+
+
+
+python -m sac_xinterp.cli infer \
+  --data_dir . \
+  --pattern "WB*.r" \
+  --xmap xmap.txt \
+  --comp r \
+  --model model_R.ckpt \
+  --infer_mode full \
+  --target_dx 5 --min_between 0 --max_between 999 \
+  --out_dir out_full_every5_R
+
+
+
+python -m sac_xinterp.cli infer \
+  --data_dir . \
+  --pattern "WB*.z" \
+  --xmap xmap.txt \
+  --comp z \
+  --model model_Z.ckpt \
+  --infer_mode full \
+  --target_dx 5 --min_between 0 --max_between 999 \
+  --out_dir out_full_every5_Z
+
+
+python -m sac_xinterp.cli infer-at-x \
+  --data_dir . \
+  --pattern "WB*.r" \
+  --xmap xmap.txt \
+  --comp r \
+  --model model.ckpt \
+  --out-dir out_targeted \
+  --targets targets_x.txt \
+  --name-prefix V
 
